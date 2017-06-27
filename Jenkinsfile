@@ -34,6 +34,7 @@ node{
     }
 }
 
+
 def deploymentOk(){
     def workspacePath = pwd()
     expectedCommitid = new File("${workspacePath}/expectedCommitid.txt").text.trim()
