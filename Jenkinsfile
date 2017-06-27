@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper;
 node{
     stage 'Build, Test and Package'
     env.PATH = "/usr/share/maven/bin:${env.PATH}"
-    git url: "https://github.com/LuxaTheS/AutoServis.git"
+    git url: "https://github.com/hrvojepek/college.git"
     // workaround, taken from https://github.com/jenkinsci/pipeline-examples/blob/master/pipeline-examples/gitcommit/gitcommit.groovy
     def commitid = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     def workspacePath = pwd()
