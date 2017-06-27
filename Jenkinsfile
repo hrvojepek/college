@@ -19,6 +19,8 @@ node{
     sh 'cp target/*.jar /tmp/'
     // start the application
     sh 'nohup java -jar /tmp/*.jar &'
+    // wait for application to respond
+    sh 'while ! httping -qc1 http://vmi87509.contabo.host:10000 ; do sleep 1 ; done'
 }
 
 node{
