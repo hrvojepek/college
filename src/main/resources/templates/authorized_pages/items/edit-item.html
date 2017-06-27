@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	th:with="currentPage='items'">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<meta name="description" content="Autoservis" />
+		<meta name="author" content="" />
+		<meta name="ctx" th:content="${#httpServletRequest.getContextPath()}" />
+		<!--  <link rel="icon" href="../../favicon.ico" />-->
+		
+		<title>Autoservis</title>
+		
+ 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+ 		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> 
+ 		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script> 
+ 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+ 		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" /> 
+ 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> 
+		<link rel="stylesheet" th:href="@{/css/style.css}" href="../../css/style.css" />
+	</head>
+	
+	<body>
+		<div th:include="fragments/header::navigation"></div>
+	
+		<div class="container">
+			<div class="row">
+				<br />
+				<h2>Izmjena poslovnice:</h2>
+				<br /> <br />
+			</div>
+	
+			<div class="row">
+				<div class="col-md-7">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemName">Naziv
+								proizvoda:</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="itemName"
+									placeholder="Item name" th:value="${item.name}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemQuantity">Količina:</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="itemQuantity"
+									placeholder="Item quantity" th:value="${item.unitsInStock}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemPrice">Cijena:</label>
+							<div class="col-sm-9">
+								<input type="number" class="form-control" id="itemPrice"
+									placeholder="Item price" th:value="${item.pricePerUnit}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemPrice">Proizvođač:</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="itemPrice"
+									placeholder="Item manufacturer" th:value="${item.manufacturer != null ? item.manufacturer.name : ' '}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemPrice">Kategorija:</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="itemPrice"
+									placeholder="Item category" th:value="${item.categories}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3" for="itemDescr">Opis:</label>
+							<div class="col-sm-9">
+								<textarea class="form-control" id="itemDescr" rows="5"
+									th:text="${item.description != null ? item.description : ' '}"></textarea>
+							</div>
+						</div>
+						<br />
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<button type="submit" class="btn btn-primary pull-right">Izmijeni</button>
+							</div>
+						</div>
+					</form>
+	
+				</div>
+			</div>
+	
+		</div>
+	
+		<footer class="footer-bottom" th:include="fragments/footer :: footer-private"></footer>
+	</body>
+</html>
