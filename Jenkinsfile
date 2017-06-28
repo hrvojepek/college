@@ -17,6 +17,19 @@ pipeline {
             }
         }
 
+        stage('Sonarqube analysis') {
+            steps {
+            echo "SONAR ---------------------------------------------"
+            script {
+                     scannerHome = tool 'SonarScanner';
+                }
+             withSonarQubeEnv('SonarQube') {
+                 bat "${scannerHome}/bin/sonar-scanner.bat"
+                }
+
+            }
+        }
+
         stage('Release') {
             steps {
                     // shutdown
