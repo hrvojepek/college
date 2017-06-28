@@ -19,7 +19,6 @@ pipeline {
 
         stage('Sonarqube analysis') {
            steps {
-            echo "SONAR ---------------------------------------------"
             runSonarScan('http://vmi87509.contabo.host:9000')
             }
         }
@@ -53,10 +52,11 @@ pipeline {
     }
 
     def runSonarScan(sonar_url){
-        echo "SONAR SCAN"
+        def scannerHome = tool 'SonarQubeScanner';
+        echo "${scannerHome}"
         withEnv(['SONAR_HOST=' + sonar_url]) {
             sh '''
-            $/opt/sonarqube/sonar-runner-2.4/bin/sonar-runner -e -Dsonar.host.url=${SONAR_HOST}
+            ${scannerHome}/bin/sonar-runner -e -Dsonar.host.url=${SONAR_HOST}
             '''
         }
     }
