@@ -7,6 +7,10 @@ pipeline {
             }
         }
 
+        stage('Stop builds') {
+                   stopBuilds()
+                }
+
         stage('Build') {
             steps {
                 script {
@@ -26,17 +30,15 @@ pipeline {
                     script {
                         sh "/usr/share/maven/bin/mvn deploy -s $MAVEN_SETTINGS -DskipTests"
                     }
+                },
+                {
+                    def scannerHome = tool 'sonarScanner';
+                    withSonarQubeEnv('SonarQube 6.2') {
+                       bat "${scannerHome}/bin/sonar-runner.bat"
+                    }
                 }
             }
         }
-
-        stage('SonarQube analysis') {
-            // requires SonarQube Scanner 2.8+
-            def scannerHome = tool 'sonarScanner';
-            withSonarQubeEnv('SonarQube 6.2') {
-              bat "${scannerHome}/bin/sonar-runner.bat"
-            }
-          }
 
         stage('Release') {
             when {
@@ -67,3 +69,16 @@ pipeline {
         }
     }
 }
+
+    def stopBuilds() {
+            sh "echo 'Stop running builds'"
+        	def jobname = env.JOB_NAME
+            def buildnum = env.BUILD_NUMBER.toInteger()
+
+            def job = Jenkins.instance.getItemByFullName(jobname)
+             for (build in job.builds) {
+                 if (!build.isBuilding()) { continue; }
+                 if (buildnum == build.getNumber().toInteger()) { continue; println "equals" }
+                build.doStop();
+            }
+    }
