@@ -32,9 +32,6 @@ pipeline {
         }
 
         stage('Release') {
-            when {
-                branch 'master'
-            }
             steps {
                     // shutdown
                     sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
