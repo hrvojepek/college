@@ -4,12 +4,9 @@ pipeline {
         stage('SCM Checkout') {
             steps {
                 checkout scm
+                stopBuilds()
             }
         }
-
-        stage('Stop builds') {
-                   stopBuilds()
-                }
 
         stage('Build') {
             steps {
