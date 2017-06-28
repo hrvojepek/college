@@ -6,15 +6,7 @@ node{
     git url: "https://github.com/hrvojepek/college.git"
 	sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
 	// sh 'curl -X POST http://vmi87509.contabo.host:10000/job/AutoServis/lastBuild/stop || true'
-	def jobname = env.JOB_NAME
-    def buildnum = env.BUILD_NUMBER.toInteger()
-
-    def job = Jenkins.instance.getItemByFullName(jobname)
-     for (build in job.builds) {
-         if (!build.isBuilding()) { continue; }
-         if (buildnum == build.getNumber().toInteger()) { continue; println "equals" }
-        build.doStop();
-    }
+    stopBuilds()
     // workaround, taken from https://github.com/jenkinsci/pipeline-examples/blob/master/pipeline-examples/gitcommit/gitcommit.groovy
     def commitid = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     def workspacePath = pwd()
@@ -61,6 +53,19 @@ def readCommitidFromJson() {
     def json = slurper.parseText(new File("${workspacePath}/info.json").text)
     def commitid = json.app.commitid
     return commitid
+}
+
+def stopBuilds() {
+        sh "echo 'Stop running builds'"
+    	def jobname = env.JOB_NAME
+        def buildnum = env.BUILD_NUMBER.toInteger()
+
+        def job = Jenkins.instance.getItemByFullName(jobname)
+         for (build in job.builds) {
+             if (!build.isBuilding()) { continue; }
+             if (buildnum == build.getNumber().toInteger()) { continue; println "equals" }
+            build.doStop();
+        }
 }
 
 def cancelRunning() {
