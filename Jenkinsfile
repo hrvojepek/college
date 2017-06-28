@@ -30,12 +30,6 @@ pipeline {
                     script {
                         sh "/usr/share/maven/bin/mvn deploy -s $MAVEN_SETTINGS -DskipTests"
                     }
-                },
-                {
-                    def scannerHome = tool 'sonarScanner';
-                    withSonarQubeEnv('SonarQube 6.2') {
-                       bat "${scannerHome}/bin/sonar-runner.bat"
-                    }
                 }
             }
         }
