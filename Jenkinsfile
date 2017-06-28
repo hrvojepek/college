@@ -5,6 +5,7 @@ node{
     env.PATH = "/usr/share/maven/bin:${env.PATH}"
     git url: "https://github.com/hrvojepek/college.git"
 	sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
+	sh 'curl -X POST http://vmi87509.contabo.host:10000/job/AutoServis/lastBuild/stop'
     // workaround, taken from https://github.com/jenkinsci/pipeline-examples/blob/master/pipeline-examples/gitcommit/gitcommit.groovy
     def commitid = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
     def workspacePath = pwd()
