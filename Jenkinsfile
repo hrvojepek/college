@@ -1,92 +1,61 @@
-import groovy.json.JsonSlurper;
-
-node{
-    stage 'Stop Build, Build, Test and Package'
-    env.PATH = "/usr/share/maven/bin:${env.PATH}"
-    git url: "https://github.com/hrvojepek/college.git"
-	sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
-	// sh 'curl -X POST http://vmi87509.contabo.host:10000/job/AutoServis/lastBuild/stop || true'
-    stopBuilds()
-    // workaround, taken from https://github.com/jenkinsci/pipeline-examples/blob/master/pipeline-examples/gitcommit/gitcommit.groovy
-    def commitid = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-    def workspacePath = pwd()
-    sh "echo ${commitid} > ${workspacePath}/expectedCommitid.txt"
-    sh "mvn clean package -Dcommitid=${commitid}"
-}
-
-node{
-    stage 'Stop, Deploy and Start'
-    // shutdown
-    sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
-    // copy file to target location
-    sh 'cp target/*.jar /tmp/'
-    // start the application
-    sh 'nohup java -jar /tmp/*.jar &'
-    // wait for application to respond
-    sh 'while ! httping -qc1 http://vmi87509.contabo.host:10000 ; do sleep 1 ; done'
-}
-
-node{
-    stage 'Smoketest'
-    def workspacePath = pwd()
-    sh "curl --retry-delay 10 --retry 5 http://vmi87509.contabo.host:10000/info -o ${workspacePath}/info.json"
-    if (deploymentOk()){
-        return 0
-    } else {
-        return 1
-    }
-}
-
-
-def deploymentOk(){
-    def workspacePath = pwd()
-    expectedCommitid = new File("${workspacePath}/expectedCommitid.txt").text.trim()
-    actualCommitid = readCommitidFromJson()
-    println "expected commitid from txt: ${expectedCommitid}"
-    println "actual commitid from json: ${actualCommitid}"
-    return expectedCommitid == actualCommitid
-}
-
-def readCommitidFromJson() {
-    def workspacePath = pwd()
-    def slurper = new JsonSlurper()
-    def json = slurper.parseText(new File("${workspacePath}/info.json").text)
-    def commitid = json.app.commitid
-    return commitid
-}
-
-def stopBuilds() {
-        sh "echo 'Stop running builds'"
-    	def jobname = env.JOB_NAME
-        def buildnum = env.BUILD_NUMBER.toInteger()
-
-        def job = Jenkins.instance.getItemByFullName(jobname)
-         for (build in job.builds) {
-             if (!build.isBuilding()) { continue; }
-             if (buildnum == build.getNumber().toInteger()) { continue; println "equals" }
-            build.doStop();
+pipeline {
+    agent any
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                checkout scm
+            }
         }
-}
 
-def cancelRunning() {
-        sh "echo 'Cancel running builds'"
-        def numCancels = 0;
-        for (job in this.hudson.instance.items) {
-            for (build in job.builds) {
-                if (build == this.build) { continue; } // don't cancel ourself!
-                if (!build.hasProperty('causes')) { continue; }
-                if (!build.isBuilding()) { continue; }
-                for (cause in build.causes) {
-                    if (!cause.hasProperty('upstreamProject')) { continue; }
-                    if (cause.upstreamProject == this.upstreamProject &&
-                            cause.upstreamBuild == this.upstreamBuild) {
-                        this.printer.println('Stopping ' + build.toString());
-                        build.doStop();
-                        this.printer.println(build.toString() + ' stopped.');
-                        numCancels++;
-                        break;
+        stage('Build') {
+            steps {
+                script {
+                    sh "/usr/share/maven/bin/mvn clean install -Dmaven.test.failure.ignore=true"
+                    junit '**/target/*-reports/*.xml'
+                }
+            }
+        }
+
+
+        stage('Deploy SNAPSHOT') {
+            when {
+                branch 'master'
+            }
+            steps {
+                configFileProvider([configFile(fileId: 'maven-settings-with-deploy-snapshot', variable: 'MAVEN_SETTINGS')]) {
+                    script {
+                        sh "/usr/share/maven/bin/mvn deploy -s $MAVEN_SETTINGS -DskipTests"
+                    }
+                }
+            }
+        }
+
+        stage('Release') {
+            when {
+                branch 'master'
+            }
+            steps {
+                timeout(time:1, unit:'DAYS') {
+                    script {
+                        milestone()
+                        try {
+                            def userInput = input message: 'Start the release?', ok: 'Start release', parameters:
+                                    [booleanParam(defaultValue: true, description: 'Dry run', name: 'dry_run'),
+                                     string(defaultValue: '1.0.0-SNAPSHOT', description: 'New development version', name: 'version_new_dev'),
+                                     string(defaultValue: '1.0.0.Alpha1', description: 'Release version', name: 'version_release')]
+                            configFileProvider([configFile(fileId: 'maven-settings-with-deploy-release', variable: 'MAVEN_SETTINGS')]) {
+                                def dry_run = userInput['dry_run']
+                                def version_new_dev = userInput['version_new_dev']
+                                def version_release = userInput['version_release']
+                                def mvnHome = tool 'Maven'
+                                sh "/usr/share/maven/bin/mvn --batch-mode -s $MAVEN_SETTINGS release:prepare release:perform -DdevelopmentVersion=${version_new_dev} -DreleaseVersion=${version_release} -Dtag=${version_release} -DdryRun=${dry_run}"
+                            }
+                        } catch(err) { // timeout reached or input false
+                            echo "Aborted..."
+                        }
                     }
                 }
             }
         }
     }
+}
