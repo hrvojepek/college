@@ -36,26 +36,14 @@ pipeline {
                 branch 'master'
             }
             steps {
-                timeout(time:1, unit:'DAYS') {
-                    script {
-                        milestone()
-                        try {
-                            def userInput = input message: 'Start the release?', ok: 'Start release', parameters:
-                                    [booleanParam(defaultValue: true, description: 'Dry run', name: 'dry_run'),
-                                     string(defaultValue: '1.0.0-SNAPSHOT', description: 'New development version', name: 'version_new_dev'),
-                                     string(defaultValue: '1.0.0.Alpha1', description: 'Release version', name: 'version_release')]
-                            configFileProvider([configFile(fileId: 'maven-settings-with-deploy-release', variable: 'MAVEN_SETTINGS')]) {
-                                def dry_run = userInput['dry_run']
-                                def version_new_dev = userInput['version_new_dev']
-                                def version_release = userInput['version_release']
-                                def mvnHome = tool 'Maven'
-                                sh "/usr/share/maven/bin/mvn --batch-mode -s $MAVEN_SETTINGS release:prepare release:perform -DdevelopmentVersion=${version_new_dev} -DreleaseVersion=${version_release} -Dtag=${version_release} -DdryRun=${dry_run}"
-                            }
-                        } catch(err) { // timeout reached or input false
-                            echo "Aborted..."
-                        }
-                    }
-                }
+                    // shutdown
+                    sh 'curl -X POST http://vmi87509.contabo.host:10000/shutdown || true'
+                    // copy file to target location
+                    sh 'cp target/*.jar /tmp/'
+                    // start the application
+                    sh 'nohup java -jar /tmp/*.jar &'
+                    // wait for application to respond
+                    sh 'while ! httping -qc1 http://vmi87509.contabo.host:10000 ; do sleep 1 ; done'
             }
         }
     }
