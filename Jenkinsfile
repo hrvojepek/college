@@ -17,20 +17,6 @@ pipeline {
             }
         }
 
-
-        stage('Deploy SNAPSHOT') {
-            when {
-                branch 'master'
-            }
-            steps {
-                configFileProvider([configFile(fileId: 'maven-settings-with-deploy-snapshot', variable: 'MAVEN_SETTINGS')]) {
-                    script {
-                        sh "/usr/share/maven/bin/mvn deploy -s $MAVEN_SETTINGS -DskipTests"
-                    }
-                }
-            }
-        }
-
         stage('Release') {
             steps {
                     // shutdown
