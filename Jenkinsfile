@@ -56,7 +56,7 @@ pipeline {
         echo "${scannerHome}"
         withEnv(['SONAR_HOST=' + sonar_url]) {
             sh '''
-            ${scannerHome}/bin/sonar-runner -e -Dsonar.host.url=${SONAR_HOST}
+            bat "${scannerHome}/bin/sonar-runner.bat"
             '''
         }
     }
