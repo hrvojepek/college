@@ -1,3 +1,5 @@
+def sonarqubeScannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+
 pipeline {
     agent any
     stages {
@@ -20,7 +22,6 @@ pipeline {
         stage('Sonarqube analysis') {
             steps {
             echo "SONAR ---------------------------------------------"
-            def sonarqubeScannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
             sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://vmi87509.contabo.host:9000"
             }
         }
