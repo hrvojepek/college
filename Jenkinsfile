@@ -20,13 +20,8 @@ pipeline {
         stage('Sonarqube analysis') {
             steps {
             echo "SONAR ---------------------------------------------"
-            script {
-                     scannerHome = tool 'SonarScanner';
-                }
-             withSonarQubeEnv('SonarQube') {
-                 bat "${scannerHome}/bin/sonar-scanner.bat"
-                }
-
+            def sonarqubeScannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+            sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://vmi87509.contabo.host:9000"
             }
         }
 
