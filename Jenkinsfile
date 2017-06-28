@@ -18,10 +18,9 @@ pipeline {
         }
 
         stage('Sonarqube analysis') {
-            def sonarqubeScannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-            steps {
+           steps {
             echo "SONAR ---------------------------------------------"
-            sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=http://vmi87509.contabo.host:9000"
+            runSonarScan('http://vmi87509.contabo.host:9000')
             }
         }
 
@@ -51,4 +50,13 @@ pipeline {
                  if (buildnum == build.getNumber().toInteger()) { continue; println "equals" }
                 build.doStop();
             }
+    }
+
+    def runSonarScan(sonar_url){
+        echo "SONAR SCAN"
+        withEnv(['SONAR_HOST=' + sonar_url]) {
+            sh '''
+            $/opt/sonarqube/sonar-runner-2.4/bin/sonar-runner -e -Dsonar.host.url=${SONAR_HOST}
+            '''
+        }
     }
