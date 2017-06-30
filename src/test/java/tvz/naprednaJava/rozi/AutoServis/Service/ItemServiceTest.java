@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -164,5 +166,31 @@ public class ItemServiceTest {
 		Item itemNew = itemService.update(item1);
 
 		assertEquals(itemNew, item);
+	}
+
+	@Test
+	public void delete() {
+		Item item = new Item();
+		item.setName("Test");
+
+		when(itemRepositoryMock.saveAndFlush(any(Item.class))).thenReturn(item);
+
+		item.setDescription("Test test");
+		Boolean status = itemService.delete(item);
+
+		assertTrue(status);
+	}
+
+	@Test
+	public void deleteUnsuccesful() {
+		Item item = new Item();
+		item.setName("Test");
+
+		when(itemRepositoryMock.saveAndFlush(any(Item.class))).thenReturn(null);
+
+		item.setDescription("Test test");
+		Boolean status = itemService.delete(item);
+
+		assertFalse(status);
 	}
 }

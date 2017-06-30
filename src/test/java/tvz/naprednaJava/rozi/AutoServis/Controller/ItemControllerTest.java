@@ -9,11 +9,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import tvz.naprednaJava.rozi.AutoServis.controller.ItemController;
+import tvz.naprednaJava.rozi.AutoServis.enums.FormMode;
+import tvz.naprednaJava.rozi.AutoServis.form.ItemForm;
 import tvz.naprednaJava.rozi.AutoServis.model.Item;
 import tvz.naprednaJava.rozi.AutoServis.model.Manufacturer;
 import tvz.naprednaJava.rozi.AutoServis.service.ItemService;
@@ -24,6 +32,7 @@ import java.util.Arrays;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -105,18 +114,99 @@ public class ItemControllerTest {
                 .andExpect(view().name("authorized_pages/items/add-item"));
     }
 
-//    @Test
-//    public void testView() throws Exception{
+    @Test
+    public void testCreate() throws Exception{
+
+        Item item = new Item();
+        ItemForm itemForm = new ItemForm();
+        itemForm.setItem(item);
+        itemForm.setMode(FormMode.NEW);
+        itemForm.setUnitsInStock("2");
+        when(itemServiceMock.create(any(Item.class))).thenReturn(item);
+
+        this.mockMvc
+                .perform(post("/private/item/create")
+                        .param("item","1")
+                        .param("mode", "NEW")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/private/items"));
+    }
+
+    @Test
+    public void testUpdate() throws Exception{
+
+        Item item = new Item();
+        ItemForm itemForm = new ItemForm();
+        itemForm.setItem(item);
+        itemForm.setMode(FormMode.NEW);
+        itemForm.setUnitsInStock("2");
+        //when(itemServiceMock.create(any(Item.class))).thenReturn(item);
+
+        this.mockMvc
+                .perform(post("/private/item/update")
+                        .param("action","")
+                        .param("mode", "NEW")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/private/items"));
+    }
+
+    @Test
+    public void testUpdateWhenActionDelete() throws Exception{
+
+        Item item = new Item();
+        ItemForm itemForm = new ItemForm();
+        itemForm.setItem(item);
+        itemForm.setMode(FormMode.NEW);
+        itemForm.setUnitsInStock("2");
+        when(itemServiceMock.delete(any(Item.class))).thenReturn(true);
+
+        this.mockMvc
+                .perform(post("/private/item/update")
+                        .param("action","delete")
+                        .param("mode", "NEW")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/private/items"));
+    }
+
+    @Test
+    public void testUpdateWhenActionNotSupported() throws Exception{
+
+        Item item = new Item();
+        ItemForm itemForm = new ItemForm();
+        itemForm.setItem(item);
+        itemForm.setMode(FormMode.NEW);
+        itemForm.setUnitsInStock("2");
+        when(itemServiceMock.delete(any(Item.class))).thenReturn(true);
+
+        this.mockMvc
+                .perform(post("/private/item/update")
+                        .param("action","unsupportedAction")
+                        .param("mode", "NEW")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/private/items"));
+    }
+//    @TestConfiguration
+//    static class InternalConfig {
 //
-//        this.mockMvc
-//                .perform(get("/private/item/view/{item}")
-//                        .param("name", "test")
-//                        .param("pricePerUnit", "1")
-//
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(forwardedUrl("authorized_pages/items/view-item"))
-//                .andExpect(model().attributeExists("item"))
-//                .andExpect(view().name("authorized_pages/items/view-item"));
+//        @Bean
+//        WebMvcConfigurer configurer() {
+//            return new WebMvcConfigurerAdapter() {
+//                @Override
+//                public void addFormatters(FormatterRegistry registry) {
+//                    registry.addConverter(String.class, Item.class, item -> {
+//                        if (item.equals("123")) {
+//                            Item itemNew = new Item();
+//                            itemNew.setName("My Item");
+//                            return itemNew;
+//                        }
+//                        throw new IllegalArgumentException();
+//                    });
+//                }
+//            };
+//        }
 //    }
 }

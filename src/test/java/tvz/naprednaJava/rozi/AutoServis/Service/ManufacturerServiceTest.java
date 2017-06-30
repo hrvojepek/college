@@ -1,5 +1,7 @@
 package tvz.naprednaJava.rozi.AutoServis.Service;
 
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -110,5 +112,30 @@ public class ManufacturerServiceTest {
 		Manufacturer manufacturerNew = manufacturerService.update(new Manufacturer("Vedrana"));
 
 		assertEquals(manufacturerNew.getName(), manufacturer.getName());
+	}
+
+	@Test
+	public void delete() {
+		Manufacturer manufacturer = new Manufacturer();
+		manufacturer.setName("Vedrana");
+		when(manufacturerRepositoryMock.findOne(any(Long.class))).thenReturn(manufacturer);
+		when(manufacturerRepositoryMock.saveAndFlush(any(Manufacturer.class))).thenReturn(manufacturer);
+
+		Boolean status = manufacturerService.delete(manufacturer);
+
+		assertTrue(status);
+	}
+
+	@Test
+	public void deleteUnsuccesful() {
+		Manufacturer manufacturer = new Manufacturer();
+		manufacturer.setName("Vedrana");
+
+		when(manufacturerRepositoryMock.findOne(any(Long.class))).thenReturn(manufacturer);
+		when(manufacturerRepositoryMock.saveAndFlush(any(Manufacturer.class))).thenReturn(null);
+
+		Boolean status = manufacturerService.delete(manufacturer);
+
+		assertFalse(status);
 	}
 }
