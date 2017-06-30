@@ -52,11 +52,10 @@ pipeline {
     }
 
     def runSonarScan(sonar_url){
-        def scannerHome = tool 'SonarQubeScanner';
-        echo "${scannerHome}"
-        withEnv(['SONAR_HOST=' + sonar_url]) {
-            sh '''
-            bat "${scannerHome}/bin/sonar-runner.bat"
-            '''
-        }
+            def scannerHome = tool 'SonarQubeScanner';
+            echo "${scannerHome}"
+            withSonarQubeEnv('My SonarQube Server') {
+               sh "${scannerHome}/bin/sonar-scanner"
+            }
+
     }
