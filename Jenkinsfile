@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh "/usr/share/maven/bin/mvn clean install -Dmaven.test.failure.ignore=true"
+                    sh "/usr/share/maven/bin/mvn clean install test"
                     junit '**/target/*-reports/*.xml'
                 }
             }
