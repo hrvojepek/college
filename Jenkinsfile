@@ -56,8 +56,7 @@ pipeline {
             echo "${scannerHome}"
             withSonarQubeEnv('sonarqube') {
                //sh "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin/sonar-scanner"
-               // sh "sudo ${scannerHome}/sonar.sh start"
-               ssh -t remotehost "sudo ${scannerHome}/sonar.sh start"
+               sudo ${scannerHome}/sonar.sh start
             }
 
     }
