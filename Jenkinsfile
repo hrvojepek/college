@@ -54,7 +54,7 @@ pipeline {
     def runSonarScan(sonar_url){
             def scannerHome = tool 'SonarQubeScanner';
             echo "${scannerHome}"
-            withSonarQubeEnv('My SonarQube Server') {
+            withSonarQubeEnv('sonarqube') {
                sh "${scannerHome}/bin/sonar-scanner"
             }
 
