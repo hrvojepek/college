@@ -56,7 +56,7 @@ pipeline {
             echo "${scannerHome}"
             withSonarQubeEnv('sonarqube') {
                //sh "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin/sonar-scanner"
-               sh "./opt/sonar/bin/linux-x86-64/sonar.sh start"
+               sh "${scannerHome}/sonar.sh start"
             }
 
     }
