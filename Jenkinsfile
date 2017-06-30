@@ -55,7 +55,8 @@ pipeline {
             def scannerHome = tool 'SonarQubeScanner';
             echo "${scannerHome}"
             withSonarQubeEnv('sonarqube') {
-               sh "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin/sonar-scanner"
+               //sh "/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQubeScanner/bin/sonar-scanner"
+               sh "${scannerHome}/sonar.sh start"
             }
 
     }
