@@ -12,15 +12,17 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import tvz.naprednaJava.rozi.AutoServis.enums.Status;
 
 @Entity
 @Audited
 @Table(name = "manufacturers")
-@Data
-@EqualsAndHashCode(callSuper = false)
+//@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Manufacturer extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = 3316390226893583576L;
@@ -34,14 +36,14 @@ public class Manufacturer extends BaseObject implements Serializable {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
+
 	public Manufacturer() {
 		super();
 	}
-	
+
 	public Manufacturer(String name) {
 		super();
-		this.name=name;
-		this.status=Status.ACTIVE;
+		this.name = name;
+		this.status = Status.ACTIVE;
 	}
 }

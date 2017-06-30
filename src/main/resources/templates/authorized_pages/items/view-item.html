@@ -24,67 +24,52 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
   </head>
 
-  <body>
-	<div th:include="fragments/header::navigation"></div>
-    <div class="container">
-    	<div class="row">
-	    	<h3>Pregled proizvoda</h3>
-	    	<br /><br />
-    	</div>
-
-    	<div class="row">
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Naziv proizvoda</label>
-    			<div class="col-xs-10">
-    				<span th:text="${item.name}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Količina</label>
-    			<div class="col-xs-10">
-    				<span th:text="${item.unitsInStock}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Cijena</label>
-    			<div class="col-xs-10">
-    				<span th:text="${item.pricePerUnit}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Proizvođač</label>
-    			<div class="col-xs-10">
-    				<span th:text="${item.manufacturer != null ? item.manufacturer.name : ' '}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Kategorija</label>
-    			<div class="col-xs-10">
-    				<span th:text="${item.categories}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12">
-    			<label class="col-xs-2">Opis</label>
-    			<div class="col-xs-5">
-    				<span th:text="${item.description}"></span>
-    			</div>
-    		</div>
-    		<br /> <br />
-    		
-    		<div class="form-group col-xs-12">
-    			<div class="col-xs-2"></div>
-    			<div class="col-xs-10">
-    			<br /> <br />
-    			<a class="btn btn-primary" th:href="@{/private/item/edit/{id}(id=${item.id})}" sec:authorize="hasAnyRole('ROLE_Admin')">Uredi proizvod</a>
-    			<br /> <br />
-    			</div>
-    		</div>
-    		
-    		<br/> <br/> <br/>
-    	</div>
-    </div>
-    
- 	<footer class="footer-bottom"  th:include="fragments/footer :: footer-private">	</footer>
- 	
-  </body>
+	<body>
+		<div th:include="fragments/header::navigation"></div>
+	    
+	    <div class="container" layout:fragment="content">
+			<h2>Pregled proizvoda</h2>
+			
+			<div class="row">
+				<div class="form-group col-xs-12">
+	    			<label class="col-xs-2">Naziv proizvoda</label>
+	    			<div class="col-xs-10">
+	    				<span th:text="${item.name}"></span>
+	    			</div>
+	    		</div>
+	    		<div class="form-group col-xs-12">
+	    			<label class="col-xs-2">Količina</label>
+	    			<div class="col-xs-10">
+	    				<span th:text="${item.unitsInStock}"></span>
+	    			</div>
+	    		</div>
+	    		<div class="form-group col-xs-12">
+	    			<label class="col-xs-2">Cijena</label>
+	    			<div class="col-xs-10">
+	    				<span th:text="${item.pricePerUnit}"></span>
+	    			</div>
+	    		</div>
+	    		<div class="form-group col-xs-12">
+	    			<label class="col-xs-2">Proizvođač</label>
+	    			<div class="col-xs-10">
+	    				<span th:text="${item.manufacturer != null ? item.manufacturer.name : ' '}"></span>
+	    			</div>
+	    		</div>
+	    		<div class="form-group col-xs-12">
+	    			<label class="col-xs-2">Opis</label>
+	    			<div class="col-xs-10">
+	    				<span th:text="${item.description}"></span>
+	    			</div>
+	    		</div>
+	    		
+	    		<div sec:authorize="hasAuthority('item.edit')" class="form-group">
+	    			<div class="col-sm-offset-2 col-sm-10 text-center">
+	    				<a class="btn btn-info" th:href="@{/private/item/edit/{id}(id=${item.id})}">Ažuriraj</a>
+	    			</div>
+	    		</div>
+			</div><!-- /.row -->
+		</div><!-- /.container -->
+	    
+		<footer class="footer-bottom"  th:include="fragments/footer :: footer-private">	</footer>
+	</body>
 </html>

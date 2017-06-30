@@ -23,52 +23,16 @@ public class ItemService {
 		return itemRepository.getOne(id);
 	}
 
-	public Collection<Item> getByName(String name) {
+	public Item getByName(String name) {
 		return itemRepository.findByName(name);
 	}
-
-	public Collection<Item> getByNameLike(String name) {
-		return itemRepository.findByNameLike("%" + name);
-	}
-
-	public Collection<Item> getByNameStartingWith(String name) {
-		return itemRepository.findByNameStartingWith(name);
-	}
-
-	public Collection<Item> getByNameEndingWith(String name) {
-		return itemRepository.findByNameEndingWith(name);
-	}
-
-	public Collection<Item> getByPricePerUnit(BigDecimal price) {
-		return itemRepository.findByPricePerUnit(price);
+	
+	public Item getActiveByName(String name) {
+		return itemRepository.findByNameAndStatus(name, Status.ACTIVE);
 	}
 
 	public Collection<Item> getByPricePerUnitBetween(BigDecimal price1, BigDecimal price2) {
 		return itemRepository.findByPricePerUnitBetween(price1, price2);
-	}
-
-	public Collection<Item> getByPricePerUnitLessThan(BigDecimal price) {
-		return itemRepository.findByPricePerUnitLessThan(price);
-	}
-
-	public Collection<Item> getByPricePerUnitGreaterThan(BigDecimal price) {
-		return itemRepository.findByPricePerUnitGreaterThan(price);
-	}
-
-	public Collection<Item> getByUnitsInStock(int unitsInStock) {
-		return itemRepository.findByUnitsInStock(unitsInStock);
-	}
-
-	public Collection<Item> getByUnitsInStockBetween(int unitsInStock1, int unitsInStock2) {
-		return itemRepository.findByUnitsInStockBetween(unitsInStock1, unitsInStock2);
-	}
-
-	public Collection<Item> getByUnitsInStockLessThan(int unitsInStock) {
-		return itemRepository.findByUnitsInStockLessThan(unitsInStock);
-	}
-
-	public Collection<Item> getByUnitsInStockGreaterThan(int unitsInStock) {
-		return itemRepository.findByUnitsInStockGreaterThan(unitsInStock);
 	}
 
 	public Collection<Item> getAll() {

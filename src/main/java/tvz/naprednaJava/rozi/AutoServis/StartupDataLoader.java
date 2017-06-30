@@ -16,14 +16,14 @@ import tvz.naprednaJava.rozi.AutoServis.enums.UserStatus;
 import tvz.naprednaJava.rozi.AutoServis.model.Item;
 import tvz.naprednaJava.rozi.AutoServis.model.Manufacturer;
 import tvz.naprednaJava.rozi.AutoServis.model.Permission;
-import tvz.naprednaJava.rozi.AutoServis.model.RepairService;
+import tvz.naprednaJava.rozi.AutoServis.model.Repair;
 import tvz.naprednaJava.rozi.AutoServis.model.Role;
 import tvz.naprednaJava.rozi.AutoServis.model.Station;
 import tvz.naprednaJava.rozi.AutoServis.model.User;
 import tvz.naprednaJava.rozi.AutoServis.service.ItemService;
 import tvz.naprednaJava.rozi.AutoServis.service.ManufacturerService;
 import tvz.naprednaJava.rozi.AutoServis.service.PermissionService;
-import tvz.naprednaJava.rozi.AutoServis.service.RepairServiceService;
+import tvz.naprednaJava.rozi.AutoServis.service.RepairService;
 import tvz.naprednaJava.rozi.AutoServis.service.RoleService;
 import tvz.naprednaJava.rozi.AutoServis.service.StationService;
 import tvz.naprednaJava.rozi.AutoServis.service.UserService;
@@ -48,9 +48,9 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 
 	@Autowired
 	private ItemService itemService;
-	
+
 	@Autowired
-	private RepairServiceService repairServiceService;
+	private RepairService repairService;
 
 	@Override
 	@Transactional
@@ -79,12 +79,9 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		Permission receiptCreate = createPermissionIfNotFound("receipt.create");
 		Permission receiptEdit = createPermissionIfNotFound("receipt.edit");
 		Permission receiptView = createPermissionIfNotFound("receipt.view");
-		Permission repairServiceCreate = createPermissionIfNotFound("repairService.create");
-		Permission repairServiceEdit = createPermissionIfNotFound("repairService.edit");
-		Permission repairServiceView = createPermissionIfNotFound("repairService.view");
-		Permission serviceAndItemCategoryCreate = createPermissionIfNotFound("serviceAndItemCategory.create");
-		Permission serviceAndItemCategoryEdit = createPermissionIfNotFound("serviceAndItemCategory.edit");
-		Permission serviceAndItemCategoryView = createPermissionIfNotFound("serviceAndItemCategory.view");
+		Permission repairCreate = createPermissionIfNotFound("repair.create");
+		Permission repairEdit = createPermissionIfNotFound("repair.edit");
+		Permission repairView = createPermissionIfNotFound("repair.view");
 		Permission serviceStationCreate = createPermissionIfNotFound("serviceStation.create");
 		Permission serviceStationEdit = createPermissionIfNotFound("serviceStation.edit");
 		Permission serviceStationView = createPermissionIfNotFound("serviceStation.view");
@@ -114,12 +111,9 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		adminPermissions.add(receiptCreate);
 		adminPermissions.add(receiptEdit);
 		adminPermissions.add(receiptView);
-		adminPermissions.add(repairServiceCreate);
-		adminPermissions.add(repairServiceEdit);
-		adminPermissions.add(repairServiceView);
-		adminPermissions.add(serviceAndItemCategoryCreate);
-		adminPermissions.add(serviceAndItemCategoryEdit);
-		adminPermissions.add(serviceAndItemCategoryView);
+		adminPermissions.add(repairCreate);
+		adminPermissions.add(repairEdit);
+		adminPermissions.add(repairView);
 		adminPermissions.add(serviceStationCreate);
 		adminPermissions.add(serviceStationEdit);
 		adminPermissions.add(serviceStationView);
@@ -141,12 +135,9 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		managerPermissions.add(receiptCreate);
 		managerPermissions.add(receiptEdit);
 		managerPermissions.add(receiptView);
-		managerPermissions.add(repairServiceCreate);
-		managerPermissions.add(repairServiceEdit);
-		managerPermissions.add(repairServiceView);
-		managerPermissions.add(serviceAndItemCategoryCreate);
-		managerPermissions.add(serviceAndItemCategoryEdit);
-		managerPermissions.add(serviceAndItemCategoryView);
+		managerPermissions.add(repairCreate);
+		managerPermissions.add(repairEdit);
+		managerPermissions.add(repairView);
 		managerPermissions.add(serviceStationEdit);
 		managerPermissions.add(serviceStationView);
 		List<Permission> employeePermissions = new ArrayList<>();
@@ -161,9 +152,7 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		employeePermissions.add(receiptCreate);
 		employeePermissions.add(receiptEdit);
 		employeePermissions.add(receiptView);
-		employeePermissions.add(repairServiceView);
-		employeePermissions.add(serviceAndItemCategoryEdit);
-		employeePermissions.add(serviceAndItemCategoryView);
+		employeePermissions.add(repairView);
 		employeePermissions.add(serviceStationView);
 		Role managerRole = createRoleIfNotFound("Manager", managerPermissions);
 		Role employeeRole = createRoleIfNotFound("Employee", employeePermissions);
@@ -177,14 +166,13 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		customerPermissions.add(itemView);
 		customerPermissions.add(manufacturerView);
 		customerPermissions.add(receiptView);
-		customerPermissions.add(repairServiceView);
-		customerPermissions.add(serviceAndItemCategoryView);
+		customerPermissions.add(repairView);
 		customerPermissions.add(serviceStationView);
 		createRoleIfNotFound("Customer", customerPermissions);
 
 		createManufacturersIfNotFound();
 		createItemsIfNotFound();
-		createRepairServicesIfNotFound();
+		createRepairsIfNotFound();
 	}
 
 	@Transactional
@@ -214,8 +202,7 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 	private User createAdminIfNotFound(Role adminRole) {
 		User user = userService.getByUsername("root");
 		if (user == null) {
-			user = new User("Admin", "User", "auser@tvz.hr", "root", new BCryptPasswordEncoder().encode("rootPass"),
-					UserStatus.ACTIVE);
+			user = new User("Admin", "User", "auser@tvz.hr", "root", new BCryptPasswordEncoder().encode("rootPass"), UserStatus.ACTIVE);
 			user.setRole(adminRole);
 			userService.create(user);
 		}
@@ -227,74 +214,70 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 		// Stuff for station 1
 		User manager = userService.getByUsername("pero");
 		if (manager == null) {
-			manager = new User("Pero", "Perić", "pperic@tvz.hr", "pero", new BCryptPasswordEncoder().encode("peroPass"),
-					UserStatus.ACTIVE);
+			manager = new User("Pero", "Perić", "pperic@tvz.hr", "pero", new BCryptPasswordEncoder().encode("peroPass"), UserStatus.ACTIVE);
 			manager.setRole(managerRole);
 			userService.create(manager);
 		}
 
-		Station serviceStation = createServiceStation("Zelena stanica", "Ilica 50, Zagreb", LocalTime.of(8, 0),
-				LocalTime.of(20, 0), "45.8110073,16.0160445");
+		Station serviceStation = createServiceStation("Zelena stanica", "Ilica 50, Zagreb", LocalTime.of(8, 0), LocalTime.of(20, 0), "45.8110073,16.0160445", manager);
 		User emplyee1 = userService.getByUsername("zeljko");
 		if (emplyee1 == null) {
-			emplyee1 = new User("Željko", "Pernar", "zpernar@tvz.hr", "zeljko",
-					new BCryptPasswordEncoder().encode("zeljkoPass"), UserStatus.ACTIVE);
+			emplyee1 = new User("Željko", "Pernar", "zpernar@tvz.hr", "zeljko", new BCryptPasswordEncoder().encode("zeljkoPass"), UserStatus.ACTIVE);
 			emplyee1.setRole(employeeRole);
+			emplyee1.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee1);
 		}
 		User emplyee2 = userService.getByUsername("ivan");
 		if (emplyee2 == null) {
-			emplyee2 = new User("Ivan", "Nešto", "inesto@tvz.hr", "ivan",
-					new BCryptPasswordEncoder().encode("ivanPass"), UserStatus.ACTIVE);
+			emplyee2 = new User("Ivan", "Nešto", "inesto@tvz.hr", "ivan", new BCryptPasswordEncoder().encode("ivanPass"), UserStatus.ACTIVE);
 			emplyee2.setRole(employeeRole);
+			emplyee2.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee2);
 		}
 		User emplyee3 = userService.getByUsername("arthur");
 		if (emplyee3 == null) {
-			emplyee3 = new User("Arthur", "Dent", "adent@tvz.hr", "arthur",
-					new BCryptPasswordEncoder().encode("arthurPass"), UserStatus.ACTIVE);
+			emplyee3 = new User("Arthur", "Dent", "adent@tvz.hr", "arthur", new BCryptPasswordEncoder().encode("arthurPass"), UserStatus.ACTIVE);
 			emplyee3.setRole(employeeRole);
+			emplyee3.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee3);
 		}
 		// Stuff for station 2
 		manager = userService.getByUsername("ford");
 		if (manager == null) {
-			manager = new User("Ford", "Prefect", "fprefect@tvz.hr", "ford",
-					new BCryptPasswordEncoder().encode("fordPass"), UserStatus.ACTIVE);
+			manager = new User("Ford", "Prefect", "fprefect@tvz.hr", "ford", new BCryptPasswordEncoder().encode("fordPass"), UserStatus.ACTIVE);
 			manager.setRole(managerRole);
 			userService.create(manager);
 		}
-		serviceStation = createServiceStation("Stanica 2", "Vukovarska 15, Zagreb", LocalTime.of(8, 30),
-				LocalTime.of(20, 30), "45.7726488,15.9514577");
+		serviceStation = createServiceStation("Stanica 2", "Vukovarska 15, Zagreb", LocalTime.of(8, 30), LocalTime.of(20, 30), "45.7726488,15.9514577", manager);
 		emplyee1 = userService.getByUsername("marko");
 		if (emplyee1 == null) {
-			emplyee1 = new User("Marko", "Perković", "mperkovic@tvz.hr", "marko",
-					new BCryptPasswordEncoder().encode("markoPass"), UserStatus.ACTIVE);
+			emplyee1 = new User("Marko", "Perković", "mperkovic@tvz.hr", "marko", new BCryptPasswordEncoder().encode("markoPass"), UserStatus.ACTIVE);
 			emplyee1.setRole(employeeRole);
+			emplyee1.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee1);
 		}
 		emplyee2 = userService.getByUsername("sinisa");
 		if (emplyee2 == null) {
-			emplyee2 = new User("Siniša", "Vuco", "svuco@tvz.hr", "sinisa",
-					new BCryptPasswordEncoder().encode("sinisaPass"), UserStatus.ACTIVE);
+			emplyee2 = new User("Siniša", "Vuco", "svuco@tvz.hr", "sinisa", new BCryptPasswordEncoder().encode("sinisaPass"), UserStatus.ACTIVE);
 			emplyee2.setRole(employeeRole);
+			emplyee2.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee2);
 		}
 		emplyee3 = userService.getByUsername("mate");
 		if (emplyee3 == null) {
-			emplyee3 = new User("Mate", "Mišo", "mmiso@tvz.hr", "mate", new BCryptPasswordEncoder().encode("matePass"),
-					UserStatus.ACTIVE);
+			emplyee3 = new User("Mate", "Mišo", "mmiso@tvz.hr", "mate", new BCryptPasswordEncoder().encode("matePass"), UserStatus.ACTIVE);
 			emplyee3.setRole(employeeRole);
+			emplyee3.setEmployeeOfStation(serviceStation);
 			userService.create(emplyee3);
 		}
 	}
 
 	@Transactional
-	private Station createServiceStation(String name, String address, LocalTime openFrom, LocalTime openUntil,
-			String geolocation) {
-		Station serviceStation = stationService.getByName(name);
+	private Station createServiceStation(String name, String address, LocalTime openFrom, LocalTime openUntil, String geolocation, User manager) {
+		Station serviceStation = stationService.getActiveByName(name);
 		if (serviceStation == null) {
 			serviceStation = new Station(name, address, openFrom, openUntil, geolocation);
+			serviceStation.setManager(manager);
 			stationService.create(serviceStation);
 		}
 		return serviceStation;
@@ -325,113 +308,100 @@ public class StartupDataLoader implements ApplicationListener<ContextRefreshedEv
 	}
 
 	private void createItemsIfNotFound() {
-		Item item = null;
-		List<Item> items = (List<Item>) itemService.getByName("Car battery 12V HT1568158");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Car battery 12V HT1568158", new BigDecimal(45), 5, "Opis ove baterije za auto.",
+		Item item = itemService.getByName("Car battery 12V HT1568158");
+		if (item == null) {
+			item = new Item("Car battery 12V HT1568158", new BigDecimal(45), 5, "Opis ove baterije za auto.", manufacturerService.getByName("Manufacturer 1"));
+			itemService.create(item);
+			item = null;
+		}
+		item = itemService.getByName("Windscreen wipers 48/2182");
+		if (item == null) {
+			item = new Item("Windscreen wipers 48/2182", new BigDecimal(10), 30, "Neki tekst koji opisuje zašto je ova guma za brisače odlična.",
 					manufacturerService.getByName("Manufacturer 1"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Windscreen wipers 48/2182");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Windscreen wipers 48/2182", new BigDecimal(10), 30,
-					"Neki tekst koji opisuje zašto je ova guma za brisače odlična.",
-					manufacturerService.getByName("Manufacturer 1"));
+		item = itemService.getByName("Disc brakes 17812");
+		if (item == null) {
+			item = new Item("Disc brakes 17812", new BigDecimal(35), 24, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 2"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Disc brakes 17812");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Disc brakes 17812", new BigDecimal(35), 24, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 2"));
+		item = itemService.getByName("Coupler BSH-7182");
+		if (item == null) {
+			item = new Item("Coupler BSH-7182", new BigDecimal(25), 16, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 3"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Coupler BSH-7182");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Coupler BSH-7182", new BigDecimal(25), 16, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 3"));
+		item = itemService.getByName("Windscreen");
+		if (item == null) {
+			item = new Item("Windscreen", new BigDecimal(158), 3, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 4"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Windscreen");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Windscreen", new BigDecimal(158), 3, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 4"));
+		item = itemService.getByName("Motor oil KT9605");
+		if (item == null) {
+			item = new Item("Motor oil KT9605", new BigDecimal(18), 11, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 5"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Motor oil KT9605");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Motor oil KT9605", new BigDecimal(18), 11, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 5"));
+		item = itemService.getByName("Motor oil KT5605");
+		if (item == null) {
+			item = new Item("Motor oil KT5605", new BigDecimal(40), 26, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 2"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Motor oil KT5605");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Motor oil KT5605", new BigDecimal(40), 26, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 2"));
+		item = itemService.getByName("Carburetor nb57bf7854");
+		if (item == null) {
+			item = new Item("Carburetor nb57bf7854", new BigDecimal(84), 8, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 3"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Carburetor nb57bf7854");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Carburetor nb57bf7854", new BigDecimal(84), 8, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 3"));
-			itemService.create(item);
-		}
-		items = (List<Item>) itemService.getByName("Front shock absorber VW DERBY 64 1.9 SDI 47kw");
-		if (items.isEmpty()) {
-			items.clear();
+		item = itemService.getByName("Front shock absorber VW DERBY 64 1.9 SDI 47kw");
+		if (item == null) {
 			item = new Item("Front shock absorber VW DERBY 64 1.9 SDI 47kw", new BigDecimal(72), 7, "Opis proizvoda.",
 					manufacturerService.getByName("Manufacturer 4"));
 			itemService.create(item);
+			item = null;
 		}
-		items = (List<Item>) itemService.getByName("Gear shifter");
-		if (items.isEmpty()) {
-			items.clear();
-			item = new Item("Gear shifter", new BigDecimal(69), 14, "Opis proizvoda.",
-					manufacturerService.getByName("Manufacturer 5"));
+		item = itemService.getByName("Gear shifter");
+		if (item == null) {
+			item = new Item("Gear shifter", new BigDecimal(69), 14, "Opis proizvoda.", manufacturerService.getByName("Manufacturer 5"));
 			itemService.create(item);
+			item = null;
 		}
 	}
 
-	private void createRepairServicesIfNotFound() {
-		RepairService repairService = null;
-		List<RepairService> repairServices = (List<RepairService>) repairServiceService.getByName("Break repair");
-		if (repairServices.isEmpty()) {
-			repairServices.clear();
-			repairService = new RepairService("Break repair", new BigDecimal(20), "Break repair service description.");
-			repairServiceService.create(repairService);
+	private void createRepairsIfNotFound() {
+		Repair repair = repairService.getActiveByName("Break repair");
+		if (repair == null) {
+			repair = new Repair("Break repair", new BigDecimal(20), "Break repair service description.");
+			repairService.create(repair);
+			repair = null;
 		}
-		repairServices = (List<RepairService>) repairServiceService.getByName("Tire balancing");
-		if (repairServices.isEmpty()) {
-			repairServices.clear();
-			repairService = new RepairService("Tire balancing", new BigDecimal(12),
-					"Tire balancing service description.");
-			repairServiceService.create(repairService);
+		repair = repairService.getActiveByName("Tire balancing");
+		if (repair == null) {
+			repair = new Repair("Tire balancing", new BigDecimal(12), "Tire balancing service description.");
+			repairService.create(repair);
+			repair = null;
 		}
-		repairServices = (List<RepairService>) repairServiceService.getByName("Oil change");
-		if (repairServices.isEmpty()) {
-			repairServices.clear();
-			repairService = new RepairService("Oil change", new BigDecimal(10), "Oil change service description.");
-			repairServiceService.create(repairService);
+		repair = repairService.getActiveByName("Oil change");
+		if (repair == null) {
+			repair = new Repair("Oil change", new BigDecimal(10), "Oil change service description.");
+			repairService.create(repair);
+			repair = null;
 		}
-		repairServices = (List<RepairService>) repairServiceService.getByName("Exhaust repair");
-		if (repairServices.isEmpty()) {
-			repairServices.clear();
-			repairService = new RepairService("Exhaust repair", new BigDecimal(15),
-					"Exhaust repair service description.");
-			repairServiceService.create(repairService);
+		repair = repairService.getActiveByName("Exhaust repair");
+		if (repair == null) {
+			repair = new Repair("Exhaust repair", new BigDecimal(15), "Exhaust repair service description.");
+			repairService.create(repair);
+			repair = null;
 		}
-		repairServices = (List<RepairService>) repairServiceService.getByName("Motor repair");
-		if (repairServices.isEmpty()) {
-			repairServices.clear();
-			repairService = new RepairService("Motor repair", new BigDecimal(23), "Motor repair service description.");
-			repairServiceService.create(repairService);
+		repair = repairService.getActiveByName("Motor repair");
+		if (repair == null) {
+			repair = new Repair("Motor repair", new BigDecimal(23), "Motor repair service description.");
+			repairService.create(repair);
+			repair = null;
 		}
 	}
 }

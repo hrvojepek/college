@@ -30,16 +30,8 @@ public class UserService {
 		return userRepository.findByEmail(email);
 	}
 
-	public Collection<User> getAll() {
-		return userRepository.findAll();
-	}
-
 	public Collection<User> getAllWithRole(Role role) {
 		return userRepository.findAllByRoleAndStatusNot(role, UserStatus.DELETED);
-	}
-
-	public Collection<User> getAllWithStatus(UserStatus status) {
-		return userRepository.findByStatus(status);
 	}
 
 	@Transactional(readOnly = false)
@@ -54,7 +46,10 @@ public class UserService {
 
 	@Transactional(readOnly = false)
 	public boolean delete(User user) {
-		// TODO set user status to DELETED and save
+		user.setStatus(UserStatus.DEACTIVATED);
+		if (userRepository.saveAndFlush(user) != null) {
+			return true;
+		}
 		return true;
 	}
 }

@@ -16,32 +16,13 @@
 		
 		<title>Autoservis</title>
 				
- 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
- 		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> 
- 		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
- 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
- 		<script type="text/javascript" th:src="@{/js/index-datatables.js}" src="../js/index-datatables.js"></script> 
- 		<link rel="stylesheet" th:href="@{/css/style.css}" href="css/style.css" /> 
- 		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" /> 
- 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-		
-		<!-- <th:block layout:fragment="javascript">
-			<script type="text/javascript" th:src="@{/bower_components/jquery/dist/jquery.min.js}"
-				src="../bower_components/jquery/dist/jquery.min.js"></script>
-			<script type="text/javascript" th:src="@{/bower_components/datatables/media/js/jquery.dataTables.js}"
-				src="../bower_components/datatables/media/js/jquery.dataTables.js"></script>
-			<script type="text/javascript" th:src="@{/bower_components/datatables-plugins-bootstrap3/dist/js/datatables-plugins-bootstrap3.js}"
-				src="../bower_components/datatables-plugins-bootstrap3/dist/js/datatables-plugins-bootstrap3.js"></script>
-			<script type="text/javascript" th:src="@{/js/index-datatables.js}" src="../js/index-datatables.js"></script>
-			<script type="text/javascript" th:src="@{/dist/js/bootstrap.min.js}" src="../dist/js/bootstrap.min.js"></script>
-		</th:block>
-		 --><th:block layout:fragment="stylesheet">
-			<link rel="stylesheet" th:href="@{/css/style.css}" href="../css/style.css" />
-			<!-- <link rel="stylesheet" th:href="@{/dist/css/bootstrap.min.css}" href="../dist/css/bootstrap.min.css" />
-			<link rel="stylesheet" th:href="@{/bower_components/datatables-plugins-bootstrap3/dist/css/datatables-plugins-bootstrap3.css}"
-				href="../bower_components/datatables-plugins-bootstrap3/dist/css/datatables-plugins-bootstrap3.css" />
-			<link rel="stylesheet" th:href="@{/dist/css/bootstrap.min.css}" href="../dist/css/bootstrap.min.css" />
-	 -->	</th:block>
+ 		<link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css" />
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" /> 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> 
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> 
+		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script> 
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 	</head>
 	
 	<body>
@@ -69,7 +50,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="receipt : ${receipts}">
-						<td th:text="${receipt.serviceStation.stationName}"></td>
+						<td th:text="${receipt.station.name}"></td>
 						<td th:text="${receipt.customer.username}"></td>
 						<td th:text="${receipt.biller.username}"></td>
 						<td th:text="${receipt.createdDate}"></td>

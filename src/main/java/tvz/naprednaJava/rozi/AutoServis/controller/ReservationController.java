@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import tvz.naprednaJava.rozi.AutoServis.AuthUser;
 import tvz.naprednaJava.rozi.AutoServis.enums.FormMode;
 import tvz.naprednaJava.rozi.AutoServis.enums.ReservationStatus;
 import tvz.naprednaJava.rozi.AutoServis.form.ReservationForm;
@@ -36,10 +38,10 @@ public class ReservationController {
 	@Autowired
 	private StationService serviceStationService;
 
+	@PreAuthorize("hasRole('ROLE_Customer')")
 	@RequestMapping("/myReservations")
-	private String myReservation(Model model, RedirectAttributes redirectAttributes) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+	public String myReservation(Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+		User user = userService.getById(authUser.getId());
 		if (!user.getRole().getName().equals("Customer")) {
 			redirectAttributes.addFlashAttribute("errors", "Samo klijent može vidjeti svoje rezervacije.");
 			return "redirect:/private/";
@@ -50,9 +52,8 @@ public class ReservationController {
 	}
 
 	@RequestMapping("/reservations")
-	private String allReservations(Model model, RedirectAttributes redirectAttributes) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+	public String allReservations(Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+		User user = userService.getById(authUser.getId());
 		if (user.getRole().getName().equals("Customer")) {
 			redirectAttributes.addFlashAttribute("errors", "Nemate prava pristupiti ovoj rezervaciji.");
 			return "redirect:/private/";
@@ -62,7 +63,7 @@ public class ReservationController {
 	}
 
 	@RequestMapping("/reservation/new")
-	private String newReservation(Model model, RedirectAttributes redirectAttributes) {
+	public String newReservation(Model model, RedirectAttributes redirectAttributes) {
 		ReservationForm form = new ReservationForm(FormMode.NEW);
 		model.addAttribute("form", form);
 		model.addAttribute("stations", serviceStationService.getAll());
@@ -71,9 +72,8 @@ public class ReservationController {
 	}
 
 	@RequestMapping("/reservation/view/{reservation}")
-	private String view(@PathVariable Reservation reservation, Model model, RedirectAttributes redirectAttributes) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+	public String view(@PathVariable Reservation reservation, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+		User user = userService.getById(authUser.getId());
 		model.addAttribute("authUser", user);
 		model.addAttribute("reservation", reservation);
 
@@ -81,11 +81,10 @@ public class ReservationController {
 	}
 
 	@RequestMapping("/reservation/edit/{reservation}")
-	private String edit(@PathVariable Reservation reservation, Model model, RedirectAttributes redirectAttributes) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+	public String edit(@PathVariable Reservation reservation, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+		User user = userService.getById(authUser.getId());
 		if (user.getRole().getName().equals("Customer")) {
-			if (reservation.getClient().getId() != user.getId()) {
+			if (reservation.getCustomer().getId() != user.getId()) {
 				// Klijenti koji nisu vlasnici ove rezervacije ne mogu joj
 				// pristupiti
 				redirectAttributes.addFlashAttribute("errors", "Nemate prava pristupiti ovoj rezervaciji.");
@@ -95,11 +94,11 @@ public class ReservationController {
 				redirectAttributes.addFlashAttribute("errors", "Ne možete ažurirati podatke zato što je popravak u tijeku ili je gotov.");
 				return "redirect:/private/";
 			}
-		} else if (user.getRole().getName().equals("Employee") && reservation.getStation().getId() != user.getEmployee().getEmployeeOfStation().getId()) {
+		} else if (user.getRole().getName().equals("Employee") && reservation.getStation().getId() != user.getEmployeeOfStation().getId()) {
 			// Employee može ažurirati rezervaciju ako je u poslovnici u kojoj on radi
 			redirectAttributes.addFlashAttribute("errors", "Nemate prava pristupiti ovoj rezervaciji. Niste zaposleni na ovoj stanici.");
 			return "redirect:/private/";
-		} else if (user.getRole().getName().equals("Manager") && reservation.getStation().getId() != user.getEmployee().getManagerOfStation().getId()) {
+		} else if (user.getRole().getName().equals("Manager") && reservation.getStation().getId() != user.getManagerOfStation().getId()) {
 			// Manager može ažurirati rezervaciju ako je u njegovoj poslovnici
 			redirectAttributes.addFlashAttribute("errors", "Nemate prava pristupiti ovoj rezervaciji. Niste voditelj ove stanice.");
 			return "redirect:/private/";
@@ -119,14 +118,13 @@ public class ReservationController {
 	}
 
 	@RequestMapping(value = "/reservation/create", method = RequestMethod.POST)
-	private String create(@ModelAttribute ReservationForm form, Model model, RedirectAttributes redirectAttributes) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+	public String create(@ModelAttribute ReservationForm form, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
+		User user = userService.getById(authUser.getId());
 		if (!user.getRole().getName().equals("Customer")) {
 			redirectAttributes.addFlashAttribute("errors", "Samo klijent može kreirati novu rezervaciju.");
 			return "redirect:/private/";
 		} else {
-			form.getReservation().setClient(user.getClient());
+			form.getReservation().setCustomer(user);
 		}
 		if (form.getRepairStartDate() != null && !form.getRepairStartDate().isEmpty()) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -153,7 +151,7 @@ public class ReservationController {
 	}
 
 	@RequestMapping(value = "/reservation/update", method = RequestMethod.POST)
-	private String update(@ModelAttribute ReservationForm form, Model model, RedirectAttributes redirectAttributes) {
+	public String update(@ModelAttribute ReservationForm form, Model model, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthUser authUser) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		Reservation dbReservation = reservationService.getById(form.getReservation().getId());
 
@@ -162,8 +160,7 @@ public class ReservationController {
 			return "redirect:/private/";
 		}
 
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userService.getByUsername(username);
+		User user = userService.getById(authUser.getId());
 		if (user.getRole().getName().equals("Customer")) {
 			if (form.getReservation().getStation() != null && form.getReservation().getStation().getId() != null) {
 				if (dbReservation.getStation().getId() != form.getReservation().getStation().getId()) {

@@ -11,29 +11,11 @@ import tvz.naprednaJava.rozi.AutoServis.model.Manufacturer;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-	Collection<Item> findByName(String name);
-
-	Collection<Item> findByNameLike(String name);
-
-	Collection<Item> findByNameStartingWith(String name);
-
-	Collection<Item> findByNameEndingWith(String name);
-
-	Collection<Item> findByPricePerUnit(BigDecimal price);
+	Item findByName(String name);
+	
+	Item findByNameAndStatus(String name, Status status);
 
 	Collection<Item> findByPricePerUnitBetween(BigDecimal price1, BigDecimal price2);
-
-	Collection<Item> findByPricePerUnitLessThan(BigDecimal price);
-
-	Collection<Item> findByPricePerUnitGreaterThan(BigDecimal price);
-
-	Collection<Item> findByUnitsInStock(int unitsInStock);
-
-	Collection<Item> findByUnitsInStockBetween(int unitsInStock1, int unitsInStock2);
-
-	Collection<Item> findByUnitsInStockLessThan(int unitsInStock);
-
-	Collection<Item> findByUnitsInStockGreaterThan(int unitsInStock);
 
 	Collection<Item> findAllByStatus(Status status);
 

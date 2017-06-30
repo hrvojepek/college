@@ -16,15 +16,17 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import tvz.naprednaJava.rozi.AutoServis.enums.Status;
 
 @Entity
 @Audited
 @Table(name = "stations")
-@Data
-@EqualsAndHashCode(callSuper = false)
+//@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Station extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = -796249792916148074L;
@@ -46,10 +48,10 @@ public class Station extends BaseObject implements Serializable {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "manager")
-	private Employee manager;
+	private User manager;
 
 	@OneToMany(mappedBy = "employeeOfStation")
-	private Collection<Employee> employees;
+	private Collection<User> employees;
 
 	@OneToMany(mappedBy = "station")
 	private Collection<Reservation> reservations;

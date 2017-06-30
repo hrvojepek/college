@@ -1,18 +1,22 @@
 package tvz.naprednaJava.rozi.AutoServis.model;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.envers.Audited;
 import tvz.naprednaJava.rozi.AutoServis.enums.UserStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 
 @Entity
 @Audited
 @Table(name = "users")
-@Data
-@EqualsAndHashCode(callSuper=false)
+//@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class User extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = -4819287527605601001L;
@@ -39,18 +43,28 @@ public class User extends BaseObject implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Role role;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "employee")
-	private Employee employee;
+	@OneToMany(mappedBy = "customer")
+	private Collection<Reservation> reservationCustomers;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "client")
-	private Client client;
-	
+	@OneToMany(mappedBy = "repairman")
+	private Collection<Reservation> reservationRepairmen;
+
+	@OneToMany(mappedBy = "biller")
+	private Collection<Receipt> receiptBiller;
+
+	@OneToMany(mappedBy = "customer")
+	private Collection<Receipt> receiptCustomer;
+
+	@OneToOne(mappedBy = "manager")
+	private Station managerOfStation;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Station employeeOfStation;
+
 	public User() {
 		super();
 	}
-	
+
 	public User(String firstName, String lastName, String email, String username, String password, UserStatus status) {
 		super();
 		this.firstName = firstName;

@@ -14,15 +14,17 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import tvz.naprednaJava.rozi.AutoServis.enums.ReservationStatus;
 
 @Entity
 @Audited
 @Table(name = "reservations")
-@Data
-@EqualsAndHashCode(callSuper=false)
+//@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Reservation extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = 8505137694213251310L;
@@ -30,18 +32,18 @@ public class Reservation extends BaseObject implements Serializable {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private ReservationStatus reservationStatus;
-	
+
 	@Column
 	private LocalDateTime repairStartDate;
-	
+
 	@Column
 	private LocalDateTime estimatedRepairEndDate;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	private Client client;
+	private User customer;
 
 	@ManyToOne(cascade = CascadeType.ALL)
-	private Employee repairman;
+	private User repairman;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Station station;

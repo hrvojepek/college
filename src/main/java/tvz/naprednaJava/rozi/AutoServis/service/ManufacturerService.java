@@ -29,14 +29,6 @@ public class ManufacturerService {
 		return manufacturerRepository.findByNameAndStatus(name, Status.ACTIVE);
 	}
 
-	public Manufacturer getDeletedByName(String name) {
-		return manufacturerRepository.findByNameAndStatus(name, Status.DELETED);
-	}
-
-	public Collection<Manufacturer> getAll() {
-		return manufacturerRepository.findAll();
-	}
-
 	public Collection<Manufacturer> getAllActive() {
 		return manufacturerRepository.findAllByStatus(Status.ACTIVE);
 	}

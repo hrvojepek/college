@@ -55,7 +55,6 @@ public class RoleService {
 		if (role.getUsers() != null) {
 			addRoleToUsers(role);
 		}
-		removeRoleFromUsers(role);
 		return role;
 	}
 
@@ -83,17 +82,6 @@ public class RoleService {
 	private void addRoleToUsers(Role role) {
 		for (User user : role.getUsers()) {
 			user.setRole(role);
-			userService.update(user);
-		}
-	}
-
-	private void removeRoleFromUsers(Role role) {
-		List<User> users = (List<User>) userService.getAllWithRole(role);
-		if (role.getUsers() != null) {
-			users.removeAll(role.getUsers());
-		}
-		for (User user : users) {
-			user.setRole(null);
 			userService.update(user);
 		}
 	}

@@ -16,17 +16,15 @@
 		
 		<title>Autoservis</title>
 		
-		<!-- Custom styles for this template -->
-		<link rel="stylesheet" th:href="@{/css/style.css}" />
-		<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-		<!-- 	<link rel="stylesheet" th:href="@{/bower_components/bootstrap/dist/css/bootstrap.min.css}" /> -->
-		<link rel="stylesheet" th:href="@{/bower_components/font-awesome/css/font-awesome.min.css}" />
-		<link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.min.css}" />
-		<script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
-		<!-- treba biti ova verzija inače date time picker ne radi -->
-		<script th:src="@{/js/bootstrap.min.js}"></script>
-		<script th:src="@{/js/moment.js}"></script>
-		<script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+ 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
+ 		<link rel="stylesheet" th:href="@{/css/style.css}" href="css/style.css" /> 
+ 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+ 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+ 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script> 
 	</head>
 	
 	<body>
@@ -49,14 +47,14 @@
 						<div class="form-group">
 							<label class="control-label col-sm-3">Stanica</label>
 							<div class="col-sm-9" sec:authorize="hasRole('ROLE_Customer')">
-								<select th:field="*{form.reservation.serviceStation}" id="form.reservation.serviceStation" tabindex="1" class="form-control">
+								<select th:field="*{form.reservation.station}" id="form.reservation.station" tabindex="1" class="form-control">
 									<option th:each="station : ${stations}" th:value="${station.id}"
-										th:text="${station.stationName}"></option>
+										th:text="${station.name}"></option>
 								</select>
 							</div>
 							<div class="col-sm-9" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')">
-								<span th:text="${reservation.serviceStation.stationName}"></span>
-								<input class="hidden" type="text" name="reservation.serviceStation.id" id="reservation.serviceStation.id" th:value="${reservation.serviceStation.id}" />
+								<span th:text="${reservation.station.name}"></span>
+								<input class="hidden" type="text" name="reservation.station.id" id="reservation.station.id" th:value="${reservation.station.id}" />
 							</div>
 						</div>
 						<!-- termin kada klijentu paše dovesti auto na popravak -->
@@ -112,10 +110,10 @@
 		<script type="text/javascript">
 			//this date time picker is not working properly o_O
 			$('#repairStartDate').datetimepicker({
-				format : 'YYYY-MM-D HH:mm'
+				format : 'YYYY-MM-DD HH:mm'
 			});
 			$('#estimatedRepairEndDate').datetimepicker({
-				format : 'YYYY-MM-D HH:mm'
+				format : 'YYYY-MM-DD HH:mm'
 			});
 		</script>
 	</body>

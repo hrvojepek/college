@@ -16,32 +16,14 @@
 		
 		<title>Autoservis</title>
 		
-<!-- 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
-<!-- 		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> -->
-<!-- 		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script> -->
-<!-- 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-<!-- 		<script type="text/javascript" th:src="@{/js/index-datatables.js}" src="../js/index-datatables.js"></script> -->
-<!-- 		<link rel="stylesheet" th:href="@{/css/style.css}" href="css/style.css" /> -->
-<!-- 		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" /> -->
-<!-- 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
-		
-		<th:block layout:fragment="javascript">
-			<script type="text/javascript" th:src="@{/bower_components/jquery/dist/jquery.min.js}"
-				src="../bower_components/jquery/dist/jquery.min.js"></script>
-			<script type="text/javascript" th:src="@{/bower_components/datatables/media/js/jquery.dataTables.js}"
-				src="../bower_components/datatables/media/js/jquery.dataTables.js"></script>
-			<script type="text/javascript" th:src="@{/bower_components/datatables-plugins-bootstrap3/dist/js/datatables-plugins-bootstrap3.js}"
-				src="../bower_components/datatables-plugins-bootstrap3/dist/js/datatables-plugins-bootstrap3.js"></script>
-			<script type="text/javascript" th:src="@{/js/index-datatables.js}" src="../js/index-datatables.js"></script>
-			<script type="text/javascript" th:src="@{/dist/js/bootstrap.min.js}" src="../dist/js/bootstrap.min.js"></script>
-		</th:block>
-		<th:block layout:fragment="stylesheet">
-			<link rel="stylesheet" th:href="@{/css/style.css}" href="../css/style.css" />
-			<link rel="stylesheet" th:href="@{/dist/css/bootstrap.min.css}" href="../dist/css/bootstrap.min.css" />
-			<link rel="stylesheet" th:href="@{/bower_components/datatables-plugins-bootstrap3/dist/css/datatables-plugins-bootstrap3.css}" 
-				href="../bower_components/datatables-plugins-bootstrap3/dist/css/datatables-plugins-bootstrap3.css" />
-			<link rel="stylesheet" th:href="@{/dist/css/bootstrap.min.css}" href="../dist/css/bootstrap.min.css" />
-		</th:block>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script type="text/javascript" th:src="@{/js/index-datatables.js}" src="../js/index-datatables.js"></script>
+		<link rel="stylesheet" th:href="@{/css/style.css}" href="css/style.css" />
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 	</head>
 	<body>
 		<div th:include="fragments/header::navigation"></div>
@@ -70,10 +52,10 @@
 						<td th:text="${user.lastName}"></td>
 						<td th:text="${user.role.name}"></td>
 						<td th:unless="${clients}">
-							<span th:if="${user.employeeOfServiceStation}" th:text="${user.employeeOfServiceStation.stationName}"></span>
+							<span th:if="${user.employeeOfStation}" th:text="${user.employeeOfStation.name}"></span>
 						</td>
 						<td th:unless="${clients}">
-							<span th:if="${user.managerOfServiceStation}" th:text="${user.managerOfServiceStation.stationName}"></span>
+							<span th:if="${user.managerOfStation}" th:text="${user.managerOfStation.name}"></span>
 						</td>
 						<td>
 							<a th:href='@{/private/user/view/{id}(id=${user.id})}'>Pogledaj profil</a>
@@ -82,7 +64,7 @@
 							<a th:href='@{/private/user/edit/{id}(id=${user.id})}'>Ažuriraj profil</a>
 						</td>
 						<td th:unless="${clients}" sec:authorize="hasRole('ROLE_Manager')">
-							<a th:if="${user.employeeOfServiceStation != null and user.employeeOfServiceStation.id == authUser.managerOfServiceStation.id}"
+							<a th:if="${user.employeeOfStation != null and user.employeeOfStation.id == authUser.managerOfStation.id}"
 								th:href='@{/private/user/edit/{id}(id=${user.id})}'>Ažuriraj profil</a>
 						</td>
 						<td sec:authorize="hasRole('ROLE_Admin')" align="center">

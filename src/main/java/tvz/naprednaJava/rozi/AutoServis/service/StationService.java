@@ -1,6 +1,5 @@
 package tvz.naprednaJava.rozi.AutoServis.service;
 
-import java.time.LocalTime;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import tvz.naprednaJava.rozi.AutoServis.enums.Status;
 import tvz.naprednaJava.rozi.AutoServis.model.Station;
+import tvz.naprednaJava.rozi.AutoServis.model.User;
 import tvz.naprednaJava.rozi.AutoServis.repository.StationRepository;
 
 @Service
@@ -22,48 +22,20 @@ public class StationService {
 		return stationRepository.getOne(id);
 	}
 
-	public Station getByName(String name) {
-		return stationRepository.findByName(name);
+	public Station getActiveByName(String name) {
+		return stationRepository.findByNameAndStatus(name, Status.ACTIVE);
 	}
 
-	public Station getByAddress(String address) {
-		return stationRepository.findByAddress(address);
+	public Station getActiveByAddress(String address) {
+		return stationRepository.findByAddressAndStatus(address, Status.ACTIVE);
 	}
 
-	public Station getByGeolocation(String geolocation) {
-		return stationRepository.findByGeolocation(geolocation);
+	public Station getActiveByGeolocation(String geolocation) {
+		return stationRepository.findByGeolocationAndStatus(geolocation, Status.ACTIVE);
 	}
 
-	public Collection<Station> getByOpenFrom(LocalTime openFrom) {
-		return stationRepository.findByOpenFrom(openFrom);
-	}
-
-	public Collection<Station> getByOpenFromBefore(LocalTime openFrom) {
-		return stationRepository.findByOpenFromBefore(openFrom);
-	}
-
-	public Collection<Station> getByOpenFromAfter(LocalTime openFrom) {
-		return stationRepository.findByOpenFromAfter(openFrom);
-	}
-
-	public Collection<Station> getByOpenFromBetween(LocalTime openFrom1, LocalTime openFrom2) {
-		return stationRepository.findByOpenFromBetween(openFrom1, openFrom2);
-	}
-
-	public Collection<Station> getByOpenUntil(LocalTime openUntil) {
-		return stationRepository.findByOpenUntil(openUntil);
-	}
-
-	public Collection<Station> getByOpenUntilBefore(LocalTime openUntil) {
-		return stationRepository.findByOpenUntilBefore(openUntil);
-	}
-
-	public Collection<Station> getByOpenUntilAfter(LocalTime openUntil) {
-		return stationRepository.findByOpenUntilAfter(openUntil);
-	}
-
-	public Collection<Station> getByOpenUntilBetween(LocalTime openUntil1, LocalTime openUntil2) {
-		return stationRepository.findByOpenUntilBetween(openUntil1, openUntil2);
+	public Station getByManager(User user) {
+		return stationRepository.findByManager(user);
 	}
 
 	public Collection<Station> getAll() {
@@ -81,7 +53,6 @@ public class StationService {
 
 	@Transactional(readOnly = false)
 	public Station update(Station station) {
-		// TODO implement custom logic
 		return stationRepository.saveAndFlush(station);
 	}
 

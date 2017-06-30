@@ -17,16 +17,11 @@
 
     <title>Autoservis</title>
     
-    <!-- Custom styles for this template -->
 	<link rel="stylesheet" th:href="@{/css/style.css}" />
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-	<link rel="stylesheet" th:href="@{/bower_components/font-awesome/css/font-awesome.min.css}" />
-	
-	<link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.min.css}" />
-    <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script><!-- treba biti ova verzija inače date time picker ne radi -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-	<script th:src="@{/js/moment.js}"></script>
-	<script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>
 
   <body>
@@ -37,7 +32,7 @@
     		<div class="form-group col-xs-12">
     			<label class="col-xs-4">Servisna stanica</label>
     			<div class="col-xs-8">
-    				<span th:text="${receipt.serviceStation.stationName}"></span>
+    				<span th:text="${receipt.station.name}"></span>
     			</div>
     		</div>
     		<div class="form-group col-xs-12">
@@ -60,8 +55,8 @@
     		</div>
     		<div class="form-group col-xs-12">
     			<label class="col-xs-4">Usluge</label>
-    			<div class="col-xs-8" th:each="service : ${receipt.repairServices}">
-    				<span th:text="${service.name}"></span>
+    			<div class="col-xs-8" th:each="repair : ${receipt.repairs}">
+    				<span th:text="${repair.name}"></span>
     			</div>
     		</div>
     		<div class="form-group col-xs-12">

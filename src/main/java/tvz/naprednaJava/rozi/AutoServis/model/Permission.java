@@ -10,14 +10,16 @@ import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Audited
 @Table(name = "permissions")
-@Data
-@EqualsAndHashCode(callSuper=false)
+//@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Permission extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = 2753988931399793970L;

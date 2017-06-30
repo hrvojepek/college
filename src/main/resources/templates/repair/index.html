@@ -3,7 +3,7 @@
 	  xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      th:with="currentPage='repairServices'">
+      th:with="currentPage='repair'">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -32,13 +32,13 @@
     	<div class="container">
 			<h1>Usluge:</h1>
 			<br /> <br /> 
-			<div th:each="service : ${services}">
+			<div th:each="repair : ${repairs}">
 				<div class="form-group col-xs-6">
 					<img th:src="@{/img/mechanic_services.jpg}" alt="Card image cap"
 						class="col-xs-4" />
 					<div class="col-xs-8">
-						<h4 class="col-xs-12" th:text="${service.name}"></h4>
-						<p th:if="${service.description}" class="col-xs-12" th:text="${service.description}"></p>
+						<h4 class="col-xs-12" th:text="${repair.name}"></h4>
+						<p th:if="${repair.description}" class="col-xs-12" th:text="${repair.description}"></p>
 					</div>
 				</div>
 			</div>

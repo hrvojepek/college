@@ -17,39 +17,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 	Collection<Reservation> findAllByReservationStatus(ReservationStatus reservationStatus);
 
-	Collection<Reservation> findAllByRepairStartDateGreaterThan(LocalDateTime repairStartDate);
-
-	Collection<Reservation> findAllByReservationStatusAndRepairStartDateGreaterThan(ReservationStatus reservationStatus, LocalDateTime repairStartDate);
-
-	Collection<Reservation> findAllByRepairStartDateLessThan(LocalDateTime repairStartDate);
-
-	Collection<Reservation> findAllByReservationStatusAndRepairStartDateLessThan(ReservationStatus reservationStatus, LocalDateTime repairStartDate);
-
-	Collection<Reservation> findAllByRepairStartDateBetween(LocalDateTime repairStartDate1, LocalDateTime repairStartDate2);
-
-	Collection<Reservation> findAllByReservationStatusAndRepairStartDateBetween(ReservationStatus reservationStatus, LocalDateTime repairStartDate1,
-			LocalDateTime repairStartDate2);
-
-	Collection<Reservation> findAllByEstimatedRepairEndDateGreaterThan(LocalDateTime EstimatedRepairEndDate);
-
-	Collection<Reservation> findAllByReservationStatusAndEstimatedRepairEndDateGreaterThan(ReservationStatus reservationStatus,
-			LocalDateTime EstimatedRepairEndDate);
-
-	Collection<Reservation> findAllByEstimatedRepairEndDateLessThan(LocalDateTime EstimatedRepairEndDate);
-
-	Collection<Reservation> findAllByReservationStatusAndEstimatedRepairEndDateLessThan(ReservationStatus reservationStatus,
-			LocalDateTime EstimatedRepairEndDate);
-
-	Collection<Reservation> findAllByEstimatedRepairEndDateBetween(LocalDateTime EstimatedRepairEndDate1, LocalDateTime EstimatedRepairEndDate2);
-
 	Collection<Reservation> findAllByReservationStatusAndEstimatedRepairEndDateBetween(ReservationStatus reservationStatus,
 			LocalDateTime EstimatedRepairEndDate1, LocalDateTime EstimatedRepairEndDate2);
 
-	Collection<Reservation> findAllByClient(User customer);
-
-	Collection<Reservation> findAllByRepairman(User repairman);
-
-	Collection<Reservation> findAllByStation(Station serviceStation);
+	Collection<Reservation> findAllByCustomer(User customer);
 
 	Collection<Reservation> findAllByStationAndRepairStartDateBetween(Station serviceStation, LocalDateTime repairStartDate1,
 			LocalDateTime repairStartDate2);

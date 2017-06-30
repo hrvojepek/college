@@ -16,7 +16,9 @@ public enum ReservationStatus {
 	REPAIRED,
 
 	/** The billed. */
-	BILLED;
+	BILLED,
+	
+	DELETED;
 
 	public static List<ReservationStatus> getStatuses() {
 		List<ReservationStatus> statuses = new ArrayList<>(EnumSet.allOf(ReservationStatus.class));

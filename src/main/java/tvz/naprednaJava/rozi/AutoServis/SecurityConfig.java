@@ -53,19 +53,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
-	/**
-	 * Password encoder.
-	 *
-	 * @return the password encoder
-	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-
 	@Bean
-	public LogoutHandler logoutHandler(){
+	public LogoutHandler logoutHandler() {
 		return new SecurityContextLogoutHandler();
 	}
 }

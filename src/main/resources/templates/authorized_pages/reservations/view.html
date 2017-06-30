@@ -17,17 +17,16 @@
 
     <title>Autoservis</title>
     
-    <!-- Custom styles for this template -->
-	<link rel="stylesheet" th:href="@{/css/style.css}" />
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-<!-- 	<link rel="stylesheet" th:href="@{/bower_components/bootstrap/dist/css/bootstrap.min.css}" /> -->
-	<link rel="stylesheet" th:href="@{/bower_components/font-awesome/css/font-awesome.min.css}" />
-	
-	<link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.min.css}" />
-    <script src="http://code.jquery.com/jquery-2.2.4.min.js"></script><!-- treba biti ova verzija inače date time picker ne radi -->
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-	<script th:src="@{/js/moment.js}"></script>
-	<script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+	<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> 
+	<script src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script> 
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script> 
+	<link rel="stylesheet" th:href="@{/css/style.css}" href="css/style.css" /> 
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" /> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.css" /> 
   </head>
 
   <body>
@@ -38,7 +37,7 @@
     		<div class="form-group col-xs-12">
     			<label class="col-xs-4">Servisna stanica</label>
     			<div class="col-xs-8">
-    				<span th:text="${reservation.serviceStation.stationName}"></span>
+    				<span th:text="${reservation.station.name}"></span>
     			</div>
     		</div>
     		<div class="form-group col-xs-12">

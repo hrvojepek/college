@@ -13,7 +13,7 @@ pipeline {
                 script {
                     sh "/usr/share/maven/bin/mvn clean install -Dmaven.test.failure.ignore=true"
                     junit '**/target/*-reports/*.xml'
-                }
+                }n
             }
         }
 

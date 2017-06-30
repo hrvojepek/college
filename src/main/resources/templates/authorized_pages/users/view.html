@@ -63,13 +63,13 @@
     		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')">
     			<label class="col-xs-2">User status</label>
     			<div class="col-xs-10">
-    				<span th:text="${user.userStatus}"></span>
+    				<span th:text="${user.status}"></span>
     			</div>
     		</div>
-    		<div class="form-group col-xs-12" th:if="${user.employeeOfServiceStation}" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')">
+    		<div class="form-group col-xs-12" th:if="${user.employeeOfStation}" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')">
     			<label class="col-xs-2">Station employ</label>
     			<div class="col-xs-10">
-    				<span th:text="${user.employeeOfServiceStation.stationName}"></span>
+    				<span th:text="${user.employeeOfStation.name}"></span>
     			</div>
     		</div>
     		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')">
@@ -84,24 +84,24 @@
     				<span th:text="${user.createdDate}"></span>
     			</div>
     		</div>
-    		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.createdBy}">
-    			<label class="col-xs-2">Kreirao</label>
-    			<div class="col-xs-10">
-    				<span th:text="${user.createdBy}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.modifiedDate}">
-    			<label class="col-xs-2">Profil zadnji put ažuriran</label>
-    			<div class="col-xs-10">
-    				<span th:text="${user.modifiedDate}"></span>
-    			</div>
-    		</div>
-    		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.modifiedBy}">
-    			<label class="col-xs-2">Profil ažurirao</label>
-    			<div class="col-xs-10">
-    				<span th:text="${user.modifiedBy}"></span>
-    			</div>
-    		</div>
+<!--     		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.createdBy}"> -->
+<!--     			<label class="col-xs-2">Kreirao</label> -->
+<!--     			<div class="col-xs-10"> -->
+<!--     				<span th:text="${user.createdBy}"></span> -->
+<!--     			</div> -->
+<!--     		</div> -->
+<!--     		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.modifiedDate}"> -->
+<!--     			<label class="col-xs-2">Profil zadnji put ažuriran</label> -->
+<!--     			<div class="col-xs-10"> -->
+<!--     				<span th:text="${user.modifiedDate}"></span> -->
+<!--     			</div> -->
+<!--     		</div> -->
+<!--     		<div class="form-group col-xs-12" sec:authorize="hasAnyRole('ROLE_Admin', 'ROLE_Manager', 'ROLE_Employee')" th:if="${user.modifiedBy}"> -->
+<!--     			<label class="col-xs-2">Profil ažurirao</label> -->
+<!--     			<div class="col-xs-10"> -->
+<!--     				<span th:text="${user.modifiedBy}"></span> -->
+<!--     			</div> -->
+<!--     		</div> -->
        		
     		<a class="btn btn-primary col-sm-offset-3" th:href="@{/private/user/edit/}" th:if="${myProfile}">Uredi profil</a>
     		<a class="btn btn-primary col-sm-offset-3" th:href="@{/private/user/edit/{id}(id=${user.id})}" th:unless="${myProfile}" sec:authorize="hasAnyRole('ROLE_Admin')">Uredi profil</a>
